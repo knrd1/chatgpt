@@ -32,7 +32,8 @@ IMPORTANT: When you specify "nickname", make sure you replace ALL occurences of 
 ```
 $ sed -i 's/ChatGPT/MyBot/g' chatgpt.py
 ```
-You can optionally adjust following settings, for more details see https://platform.openai.com/docs/api-reference/completions
+You can optionally adjust following settings, for more details see:
+https://platform.openai.com/docs/api-reference/completions
 ```
             temperature=1,
             max_tokens=300,
