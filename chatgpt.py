@@ -35,6 +35,8 @@ while True:
             frequency_penalty=0,
             presence_penalty=0
         )
-        answer = response.choices[0].text.strip()
+        answers = response.choices[0].text.strip().split('\n')
+        for answer in answers:
+            irc.send(bytes("PRIVMSG " + channel + " :" + answer.strip() + "\n", "UTF-8"))
         irc.send(bytes("PRIVMSG " + channel + " :" + answer + "\n", "UTF-8"))
     time.sleep(1)
