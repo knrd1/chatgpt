@@ -55,7 +55,8 @@ ChatGPT will interact only if you mention its nickname:
 ```
 ### Model endpoint compatibility
 
-ChatGPT uses endpoint /v1/completions. Following engines are compatible:
+ChatGPT uses endpoint /v1/completions. Following engines are compatible.
+More details about models: https://platform.openai.com/docs/models
 ```
 text-davinci-003
 text-davinci-002
