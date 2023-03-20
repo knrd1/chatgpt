@@ -38,5 +38,4 @@ while True:
         answers = response.choices[0].text.strip().split('\n')
         for answer in answers:
             irc.send(bytes("PRIVMSG " + channel + " :" + answer.strip() + "\n", "UTF-8"))
-        irc.send(bytes("PRIVMSG " + channel + " :" + answer + "\n", "UTF-8"))
     time.sleep(1)
