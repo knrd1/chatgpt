@@ -26,10 +26,6 @@ port = 6667
 channel = "#irc"
 nickname = "MyBot"
 ```
-Optionally you can edit the engine, the list of compatible engines below:
-```
-                engine="text-davinci-003",
-```
 IMPORTANT: When you specify "nickname", make sure you replace ALL occurences of ChatGPT in chatgpt.py file to the new nickname. For example, if your bot nick name is "MyBot", do:
 ```
 $ sed -i 's/ChatGPT/MyBot/g' chatgpt.py
@@ -42,6 +38,10 @@ https://platform.openai.com/docs/api-reference/completions
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0
+```
+Also you can edit the engine, the list of compatible engines below:
+```
+                engine="text-davinci-003",
 ```
 ### Connecting bot to IRC server:
 ```
