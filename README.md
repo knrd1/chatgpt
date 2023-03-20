@@ -13,6 +13,8 @@ Install python3 and the official Python bindings:
 apt install python3 (Debian/Ubuntu)
 yum install python3 (RedHat/CentOS)
 pip3 install openai
+git clone https://github.com/knrd1/chatgpt.git
+cd chatgpt
 ```
 ### Configuration:
 
