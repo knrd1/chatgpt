@@ -48,7 +48,7 @@ Also you can edit the engine, the list of compatible engines below:
 $ python3 chatgpt.py
 ```
 ### Interaction:
-ChatGPT will interact only reply if you mention its nickname:
+ChatGPT will interact only if you mention its nickname:
 ```
 10:31:12 <@knrd1> ChatGPT: hello, how are you?
 10:31:14 < ChatGPT> Hi there, I'm doing well, thank you. How about you?
