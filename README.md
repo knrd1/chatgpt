@@ -10,12 +10,12 @@ Create an account and obtain your API key: https://platform.openai.com/account/a
 
 Install python3 and the official Python bindings:
 ```
-apt install python3 (Debian/Ubuntu)
-yum install python3 (RedHat/CentOS)
-pip3 install openai
-git clone https://github.com/knrd1/chatgpt.git
-cd chatgpt
-cp example-chat.conf chat.conf
+$ apt install python3 (Debian/Ubuntu)
+$ yum install python3 (RedHat/CentOS)
+$ pip3 install openai
+$ git clone https://github.com/knrd1/chatgpt.git
+$ cd chatgpt
+$ cp example-chat.conf chat.conf
 ```
 ### Configuration:
 
@@ -35,15 +35,16 @@ nickname = MyBot
 You can optionally adjust following settings in chatgpt.py, please see docs for more details:
 https://platform.openai.com/docs/api-reference/completions
 ```
-            temperature=0.8,
-            max_tokens=300,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0
+temperature=0.8,
+max_tokens=1000,
+top_p=1,
+frequency_penalty=0,
+presence_penalty=0
+request_timeout=180
 ```
 Also, you can edit the model, the list of compatible models below:
 ```
-                model="text-davinci-003",
+model="text-davinci-003",
 ```
 ### Connecting bot to IRC server:
 ```
