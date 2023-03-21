@@ -30,6 +30,8 @@ IMPORTANT: When you specify "nickname", make sure you replace all occurences of 
 ```
 $ sed -i 's/ChatGPT/MyBot/g' chatgpt.py
 ```
+### Optional settings:
+
 You can optionally adjust following settings, for more details see:
 https://platform.openai.com/docs/api-reference/completions
 ```
