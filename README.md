@@ -1,5 +1,5 @@
 # ChatGPT
-ChatGPT is a simple IRC bot written in python using Open AI endpoints to answer questions.
+ChatGPT is a simple IRC bot written in Python. It connects to OpenAI endpoints to answer questions.
 
 ChatGPT uses official bindings from OpenAI to interact with the API through HTTP requests:
 https://platform.openai.com/docs/api-reference
@@ -18,7 +18,7 @@ cd chatgpt
 ```
 ### Configuration:
 
-Edit chatgpt.py and change variables to the file. Example configuration for IRCNet:
+Edit chatgpt.py and change variables. Example configuration for IRCNet:
 ```
 openai.api_key = "sk-XXXXXXXXXXXXXXXX"
 server = "open.ircnet.net"
@@ -26,20 +26,20 @@ port = 6667
 channel = "#irc"
 nickname = "MyBot"
 ```
-IMPORTANT: When you specify "nickname", make sure you replace ALL occurences of ChatGPT in chatgpt.py file to the new nickname. For example, if your bot nick name is "MyBot", do:
+IMPORTANT: When you specify "nickname", make sure you replace all occurences of "ChatGPT" in chatgpt.py file to the new nickname. For example, if your bot nickname is "MyBot", do:
 ```
 $ sed -i 's/ChatGPT/MyBot/g' chatgpt.py
 ```
 You can optionally adjust following settings, for more details see:
 https://platform.openai.com/docs/api-reference/completions
 ```
-            temperature=1,
-            max_tokens=300,
+            temperature=0.8,
+            max_tokens=500,
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0
 ```
-Also you can edit the engine, the list of compatible engines below:
+Also, you can edit the engine, the list of compatible engines below:
 ```
                 engine="text-davinci-003",
 ```
@@ -55,8 +55,7 @@ ChatGPT will interact only if you mention its nickname:
 ```
 ### Model endpoint compatibility
 
-ChatGPT uses endpoint /v1/completions. Following engines are compatible.
-More details about models: https://platform.openai.com/docs/models
+ChatGPT uses endpoint v1/completions. Following engines are compatible.
 ```
 text-davinci-003
 text-davinci-002
@@ -68,3 +67,4 @@ curie
 babbage
 ada
 ```
+More details about engines: https://platform.openai.com/docs/models

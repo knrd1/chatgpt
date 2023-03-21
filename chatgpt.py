@@ -29,8 +29,8 @@ while True:
         response = openai.Completion.create(
             engine="text-davinci-003",
             prompt="Q: " + question + "\nA:",
-            temperature=1,
-            max_tokens=300,
+            temperature=0.8,
+            max_tokens=500,
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0
