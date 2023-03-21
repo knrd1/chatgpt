@@ -52,7 +52,7 @@ while True:
                 top_p=1,
                 frequency_penalty=0,
                 presence_penalty=0,
-                request_timeout=5  # Set request timeout to 3 minutes
+                request_timeout=180  # Set request timeout to 3 minutes
             )
             answers = [x.strip() for x in response.choices[0].text.strip().split('\n')]
             for answer in answers:
