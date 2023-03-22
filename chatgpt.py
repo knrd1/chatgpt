@@ -34,9 +34,11 @@ while True:
 
 # Listen for messages from users
 while True:
-    message = irc.recv(2048).decode("UTF-8")
+    try:
+        message = irc.recv(2048).decode("UTF-8")
+    except UnicodeDecodeError:
+        continue
     if message.find("PING") != -1:
-        # Respond to server PING requests
         irc.send(bytes("PONG " + message.split()[1] + "\n", "UTF-8"))
     elif message.find("KICK " + channel + " " + nickname) != -1:
         irc.send(bytes("JOIN " + channel + "\n", "UTF-8"))
@@ -44,22 +46,29 @@ while True:
     elif message.find("PRIVMSG " + channel + " :" + nickname + ":") != -1:
         question = message.split(nickname + ":")[1].strip()
         try:
-            response = openai.Completion.create(
-                model="text-davinci-003",
-                prompt="Q: " + question + "\nA:",
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": question}],
                 temperature=0.8,
                 max_tokens=1000,
                 top_p=1,
                 frequency_penalty=0,
                 presence_penalty=0,
-                request_timeout=180  # Set request timeout to 3 minutes
+                request_timeout=180
             )
-            answers = [x.strip() for x in response.choices[0].text.strip().split('\n')]
+            answers = [x.strip() for x in response.choices[0].message.content.strip().split('\n')]
             for answer in answers:
                 while len(answer) > 0:
-                    irc.send(bytes("PRIVMSG " + channel + " :" + answer[:400] + "\n", "UTF-8"))
-                    answer = answer[400:]
-        except openai.error.Timeout as e:  # Catch the timeout error
+                    if len(answer) <= 392:
+                        irc.send(bytes("PRIVMSG " + channel + " :" + answer + "\n", "UTF-8"))
+                        answer = ""
+                    else:
+                        last_space_index = answer[:392].rfind(" ")
+                        if last_space_index == -1:
+                            last_space_index = 392
+                        irc.send(bytes("PRIVMSG " + channel + " :" + answer[:last_space_index] + "\n", "UTF-8"))
+                        answer = answer[last_space_index:].lstrip()
+        except openai.error.Timeout as e:
             print("Error: " + str(e))
             irc.send(bytes("PRIVMSG " + channel + " :API call timed out. Try again later.\n", "UTF-8"))
         except Exception as e:
