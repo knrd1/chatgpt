@@ -54,7 +54,7 @@ while True:
                 top_p=1,
                 frequency_penalty=0,
                 presence_penalty=0,
-                request_timeout=60
+                request_timeout=30
             )
             answers = [x.strip() for x in response.choices[0].message.content.strip().split('\n')]
             for answer in answers:

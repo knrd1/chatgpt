@@ -40,7 +40,7 @@ max_tokens=1000,
 top_p=1,
 frequency_penalty=0,
 presence_penalty=0
-request_timeout=180
+request_timeout=30
 ```
 Also, you can edit the model, the list of compatible models below:
 ```
