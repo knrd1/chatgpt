@@ -10,8 +10,8 @@ Create an account and obtain your API key: https://platform.openai.com/account/a
 
 Install python3 and the official Python bindings:
 ```
-$ apt install python3 (Debian/Ubuntu)
-$ yum install python3 (RedHat/CentOS)
+$ apt install python3 python3-pip (Debian/Ubuntu)
+$ yum install python3 python3-pip (RedHat/CentOS)
 $ pip3 install openai
 $ git clone https://github.com/knrd1/chatgpt.git
 $ cd chatgpt
@@ -66,3 +66,7 @@ ChatGPT uses endpoint v1/chat/completions. Following models are compatible.
 gpt-4, gpt-4-0314, gpt-4-32k, gpt-4-32k-0314, gpt-3.5-turbo, gpt-3.5-turbo-0301
 ```
 More details about models: https://platform.openai.com/docs/models
+
+To use endpoint v1/completions, use models that support "completions", e.g. "text-davinci-003"
+
+IRC bot supporting this endpoint is available on github: https://github.com/knrd1/chatbot
