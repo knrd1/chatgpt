@@ -32,7 +32,7 @@ max_tokens = 1000
 top_p = 1
 frequency_penalty = 0
 presence_penalty = 0
-request_timeout = 30
+request_timeout = 60
 
 [irc]
 server = open.ircnet.net
@@ -59,12 +59,11 @@ ChatGPT will interact only if you mention its nickname:
 ```
 ### Model endpoint compatibility
 
-ChatGPT uses endpoint v1/chat/completions. Following models are compatible.
+ChatGPT uses API endpoint v1/chat/completions. Following models are compatible.
 ```
 gpt-4, gpt-4-0314, gpt-4-32k, gpt-4-32k-0314, gpt-3.5-turbo, gpt-3.5-turbo-0301
 ```
 More details about models: https://platform.openai.com/docs/models
 
-To use endpoint v1/completions, use models that support "completions", e.g. "text-davinci-003"
-
-IRC bot supporting this endpoint is available on github: https://github.com/knrd1/chatbot
+To use API endpoint v1/completions, use models that support "completions", e.g. "text-davinci-003"
+See branch "completions" for Python code that supports this API endpoint.
