@@ -24,27 +24,25 @@ Edit chat.conf and change variables. Example configuration for IRCNet:
 [openai]
 api_key = sk-XXXXXXXXXXXXXXX
 
+[chatcompletion]
+model = gpt-3.5-turbo
+role = user
+temperature = 0.8
+max_tokens = 1000
+top_p = 1
+frequency_penalty = 0
+presence_penalty = 0
+request_timeout = 30
+
 [irc]
 server = open.ircnet.net
 port = 6667
-channel = #irc
+ssl = false
+channels = #knrd1,#github
 nickname = MyBot
-```
-### Optional settings:
-
-You can optionally adjust following settings in chatgpt.py, please see docs for more details:
-https://platform.openai.com/docs/api-reference/completions
-```
-temperature=0.8,
-max_tokens=1000,
-top_p=1,
-frequency_penalty=0,
-presence_penalty=0
-request_timeout=30
-```
-Also, you can edit the model, the list of compatible models below:
-```
-model="gpt-3.5-turbo",
+ident = mybot
+realname = My Bot
+password = 
 ```
 ### Connecting bot to IRC server:
 ```

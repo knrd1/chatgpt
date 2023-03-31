@@ -1,5 +1,6 @@
 import openai
 import socket
+import ssl
 import time
 import configparser
 from typing import Union, Tuple
@@ -11,21 +12,42 @@ config.read('chat.conf')
 # Set up OpenAI API key
 openai.api_key = config.get('openai', 'api_key')
 
+# Set up ChatCompletion parameters
+model = config.get('chatcompletion', 'model')
+role = config.get('chatcompletion', 'role')
+temperature =  config.getfloat('chatcompletion', 'temperature')
+max_tokens = config.getint('chatcompletion', 'max_tokens')
+top_p = config.getint('chatcompletion', 'top_p')
+frequency_penalty = config.getint('chatcompletion', 'frequency_penalty')
+presence_penalty = config.getint('chatcompletion', 'presence_penalty')
+request_timeout = config.getint('chatcompletion', 'request_timeout')
+
 # Set up IRC connection settings
 server = config.get('irc', 'server')
 port = config.getint('irc', 'port')
-channel = config.get('irc', 'channel')
+usessl = config.getboolean('irc', 'ssl')
+channels = config.get('irc', 'channels').split(',')
 nickname = config.get('irc', 'nickname')
+ident = config.get('irc', 'ident')
+realname = config.get('irc', 'realname')
+password = config.get('irc', 'password')
 
 # Connect to IRC server
 while True:
     try:
-        print ("connecting to:" + server)
+        print ("Connecting to:" + server)
         irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         irc.connect((server, port))
-        irc.send(bytes("USER " + nickname + " " + nickname + " " + nickname + " :" + nickname + "\n", "UTF-8"))
+        if usessl:
+            context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+            context.check_hostname = False
+            context.verify_mode = ssl.CERT_NONE
+            irc = context.wrap_socket(irc, server_hostname=server)
+        if password:
+            irc.send(bytes("PASS " + password + "\n", "UTF-8"))
+        irc.send(bytes("USER " + ident + " 0 * :" + realname + "\n", "UTF-8"))
         irc.send(bytes("NICK " + nickname + "\n", "UTF-8"))
-        irc.send(bytes("JOIN " + channel + "\n", "UTF-8"))
+        irc.send(bytes("JOIN " + ",".join(channels) + "\n", "UTF-8"))
         print ("connected to:" + server)
         break
     except:
@@ -35,26 +57,38 @@ while True:
 # Listen for messages from users
 while True:
     try:
-        message = irc.recv(2048).decode("UTF-8")
+        data = irc.recv(4096).decode("UTF-8")
     except UnicodeDecodeError:
         continue
-    if message.find("PING") != -1:
-        irc.send(bytes("PONG " + message.split()[1] + "\n", "UTF-8"))
-    elif message.find("KICK " + channel + " " + nickname) != -1:
-        irc.send(bytes("JOIN " + channel + "\n", "UTF-8"))
-        print("Kicked from channel. Rejoining...")
-    elif message.find("PRIVMSG " + channel + " :" + nickname + ":") != -1:
-        question = message.split(nickname + ":")[1].strip()
+    chunk = data.split()
+    if data.startswith(":"):
+        command = chunk[1]
+    else:
+        command = chunk[0]
+    if command == "PING":
+        irc.send(bytes("PONG " + chunk[1] + "\n", "UTF-8"))
+    elif command == "471" or command == "473" or command == "474" or command == "475":
+        print("Unable to join " + chunk[3] + ": it can be full, invite only, bot is banned or need a key.")
+    elif command == "KICK" and chunk[3] == nickname:
+        irc.send(bytes("JOIN " + chunk[2] + "\n", "UTF-8"))
+        print("Kicked from channel " + chunk[2] + ". Rejoining...")
+    elif command == "INVITE":
+        if data.split(" :")[1].strip() in channels:
+            irc.send(bytes("JOIN " + data.split(" :")[1].strip() + "\n", "UTF-8"))
+            print("Invited into channel " + data.split(" :")[1].strip() + ". Joining...")
+    elif command == "PRIVMSG" and chunk[2].startswith("#") and chunk[3] == ":" + nickname + ":":
+        channel = chunk[2].strip()
+        question = data.split(nickname + ":")[1].strip()
         try:
             response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[{"role": "user", "content": question}],
-                temperature=0.8,
-                max_tokens=1000,
-                top_p=1,
-                frequency_penalty=0,
-                presence_penalty=0,
-                request_timeout=30
+                model=model,
+                messages=[{"role": role, "content": question}],
+                temperature=temperature,
+                max_tokens=max_tokens,
+                top_p=top_p,
+                frequency_penalty=frequency_penalty,
+                presence_penalty=presence_penalty,
+                request_timeout=request_timeout
             )
             answers = [x.strip() for x in response.choices[0].message.content.strip().split('\n')]
             for answer in answers:
