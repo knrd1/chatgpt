@@ -48,7 +48,7 @@ while True:
         irc.send(bytes("USER " + ident + " 0 * :" + realname + "\n", "UTF-8"))
         irc.send(bytes("NICK " + nickname + "\n", "UTF-8"))
         irc.send(bytes("JOIN " + ",".join(channels) + "\n", "UTF-8"))
-        print ("connected to:" + server)
+        print ("Connected to:" + server)
         break
     except:
         print("Connection failed. Retrying in 5 seconds...")
@@ -79,33 +79,68 @@ while True:
     elif command == "PRIVMSG" and chunk[2].startswith("#") and chunk[3] == ":" + nickname + ":":
         channel = chunk[2].strip()
         question = data.split(nickname + ":")[1].strip()
-        try:
-            response = openai.ChatCompletion.create(
-                model=model,
-                messages=[{"role": role, "content": question}],
-                temperature=temperature,
-                max_tokens=max_tokens,
-                top_p=top_p,
-                frequency_penalty=frequency_penalty,
-                presence_penalty=presence_penalty,
-                request_timeout=request_timeout
-            )
-            answers = [x.strip() for x in response.choices[0].message.content.strip().split('\n')]
-            for answer in answers:
-                while len(answer) > 0:
-                    if len(answer) <= 392:
-                        irc.send(bytes("PRIVMSG " + channel + " :" + answer + "\n", "UTF-8"))
-                        answer = ""
-                    else:
-                        last_space_index = answer[:392].rfind(" ")
-                        if last_space_index == -1:
-                            last_space_index = 392
-                        irc.send(bytes("PRIVMSG " + channel + " :" + answer[:last_space_index] + "\n", "UTF-8"))
-                        answer = answer[last_space_index:].lstrip()
-        except openai.error.Timeout as e:
-            print("Error: " + str(e))
-            irc.send(bytes("PRIVMSG " + channel + " :API call timed out. Try again later.\n", "UTF-8"))
-        except Exception as e:
-            print("Error: " + str(e))
-            irc.send(bytes("PRIVMSG " + channel + " :API call failed. Try again later.\n", "UTF-8"))
+        if model in ["gpt-4", "gpt-4-0314", "gpt-4-32k", "gpt-4-32k-0314", "gpt-3.5-turbo", "gpt-3.5-turbo-0301"]:
+            try:
+                response = openai.ChatCompletion.create(
+                    model=model,
+                    messages=[{"role": role, "content": question}],
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                    top_p=top_p,
+                    frequency_penalty=frequency_penalty,
+                    presence_penalty=presence_penalty,
+                    request_timeout=request_timeout
+                )
+                answers = [x.strip() for x in response.choices[0].message.content.strip().split('\n')]
+                for answer in answers:
+                    while len(answer) > 0:
+                        if len(answer) <= 392:
+                            irc.send(bytes("PRIVMSG " + channel + " :" + answer + "\n", "UTF-8"))
+                            answer = ""
+                        else:
+                            last_space_index = answer[:392].rfind(" ")
+                            if last_space_index == -1:
+                                last_space_index = 392
+                            irc.send(bytes("PRIVMSG " + channel + " :" + answer[:last_space_index] + "\n", "UTF-8"))
+                            answer = answer[last_space_index:].lstrip()
+            except openai.error.Timeout as e:
+                print("Error: " + str(e))
+                irc.send(bytes("PRIVMSG " + channel + " :API call timed out. Try again later.\n", "UTF-8"))
+            except Exception as e:
+                print("Error: " + str(e))
+                irc.send(bytes("PRIVMSG " + channel + " :API call failed. Try again later.\n", "UTF-8"))
+        elif model in ["text-davinci-003", "text-davinci-002", "text-curie-001", "text-babbage-001", "text-ada-001", "davinci", "curie", "babbage", "ada"]:
+            try:
+                response = openai.Completion.create(
+                    model=model,
+                    prompt="Q: " + question + "\nA:",
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                    top_p=top_p,
+                    frequency_penalty=frequency_penalty,
+                    presence_penalty=presence_penalty,
+                    request_timeout=request_timeout
+                )
+                answers = [x.strip() for x in response.choices[0].text.strip().split('\n')]
+                for answer in answers:
+                    while len(answer) > 0:
+                        if len(answer) <= 392:
+                            irc.send(bytes("PRIVMSG " + channel + " :" + answer + "\n", "UTF-8"))
+                            answer = ""
+                        else:
+                            last_space_index = answer[:392].rfind(" ")
+                            if last_space_index == -1:
+                                last_space_index = 392
+                            irc.send(bytes("PRIVMSG " + channel + " :" + answer[:last_space_index] + "\n", "UTF-8"))
+                            answer = answer[last_space_index:].lstrip()
+            except openai.error.Timeout as e:
+                print("Error: " + str(e))
+                irc.send(bytes("PRIVMSG " + channel + " :API call timed out. Try again later.\n", "UTF-8"))
+            except Exception as e:
+                print("Error: " + str(e))
+                irc.send(bytes("PRIVMSG " + channel + " :API call failed. Try again later.\n", "UTF-8"))
+        else:
+            print("Invalid model.")
+            irc.send(bytes("PRIVMSG " + channel + " :Invalid model.\n", "UTF-8"))
+            continue
     time.sleep(1)

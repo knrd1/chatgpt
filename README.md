@@ -59,11 +59,14 @@ ChatGPT will interact only if you mention its nickname:
 ```
 ### Model endpoint compatibility
 
-ChatGPT uses API endpoint v1/chat/completions. Following models are compatible.
+ChatGPT IRC bot can use two API endpoints: /v1/chat/completions and /v1/completions
+
+Following models support endpoint /v1/chat/completions:
 ```
 gpt-4, gpt-4-0314, gpt-4-32k, gpt-4-32k-0314, gpt-3.5-turbo, gpt-3.5-turbo-0301
 ```
+Models that support /v1/completions:
+```
+text-davinci-003, text-davinci-002, text-curie-001, text-babbage-001, text-ada-001, davinci, curie, babbage, ada
+```
 More details about models: https://platform.openai.com/docs/models
-
-To use API endpoint v1/completions, use models that support "completions", e.g. "text-davinci-003"
-See branch "completions" for Python code that supports this API endpoint.
