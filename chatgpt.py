@@ -3,6 +3,7 @@ import socket
 import ssl
 import time
 import configparser
+import pyshorteners
 from typing import Union, Tuple
 
 # Read configuration from file
@@ -136,6 +137,21 @@ while True:
             except openai.error.Timeout as e:
                 print("Error: " + str(e))
                 irc.send(bytes("PRIVMSG " + channel + " :API call timed out. Try again later.\n", "UTF-8"))
+            except Exception as e:
+                print("Error: " + str(e))
+                irc.send(bytes("PRIVMSG " + channel + " :API call failed. Try again later.\n", "UTF-8"))
+        elif model in ["dalle"]:
+            try:
+                response = openai.Image.create(
+                prompt="Q: " + question + "\nA:",
+                n=1,
+                size="1024x1024"
+                )
+                answers = response.data[0].url
+                long_url = answers
+                type_tiny = pyshorteners.Shortener()
+                short_url = type_tiny.tinyurl.short(long_url)
+                irc.send(bytes("PRIVMSG " + channel + " :" + short_url + "\n", "UTF-8"))
             except Exception as e:
                 print("Error: " + str(e))
                 irc.send(bytes("PRIVMSG " + channel + " :API call failed. Try again later.\n", "UTF-8"))
