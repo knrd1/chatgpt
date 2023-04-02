@@ -75,7 +75,7 @@ Models that support /v1/completions:
 ```
 text-davinci-003, text-davinci-002, text-curie-001, text-babbage-001, text-ada-001, davinci, curie, babbage, ada
 ```
-Use the "dalle" model to generate the image:
+Create an image using endpoint /v1/images/generations:
 ```
 dalle
 ```
