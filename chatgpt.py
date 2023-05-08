@@ -34,33 +34,42 @@ realname = config.get('irc', 'realname')
 password = config.get('irc', 'password')
 
 # Connect to IRC server
-while True:
-    try:
-        print ("Connecting to:" + server)
-        irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        irc.connect((server, port))
-        if usessl:
-            context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-            context.check_hostname = False
-            context.verify_mode = ssl.CERT_NONE
-            irc = context.wrap_socket(irc, server_hostname=server)
-        if password:
-            irc.send(bytes("PASS " + password + "\n", "UTF-8"))
-        irc.send(bytes("USER " + ident + " 0 * :" + realname + "\n", "UTF-8"))
-        irc.send(bytes("NICK " + nickname + "\n", "UTF-8"))
-        irc.send(bytes("JOIN " + ",".join(channels) + "\n", "UTF-8"))
-        print ("Connected to:" + server)
-        break
-    except:
-        print("Connection failed. Retrying in 5 seconds...")
-        time.sleep(5)
+def connect(server, port, usessl, password, ident, realname, nickname, channels):
+    while True:
+        try:
+            print("Connecting to: " + server)
+            irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            irc.connect((server, port))
+            if usessl:
+                context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+                context.check_hostname = False
+                context.verify_mode = ssl.CERT_NONE
+                irc = context.wrap_socket(irc, server_hostname=server)
+            if password:
+                irc.send(bytes("PASS " + password + "\n", "UTF-8"))
+            irc.send(bytes("USER " + ident + " 0 * :" + realname + "\n", "UTF-8"))
+            irc.send(bytes("NICK " + nickname + "\n", "UTF-8"))
+            print("Connected to: " + server)
+            return irc
+        except:
+            print("Connection failed. Retrying in 5 seconds...")
+            time.sleep(5)
+
+irc = connect(server, port, usessl, password, ident, realname, nickname, channels)
 
 # Listen for messages from users
 while True:
     try:
         data = irc.recv(4096).decode("UTF-8")
+        if data:
+            print(data)
     except UnicodeDecodeError:
         continue
+    except:
+        print("Connection lost. Reconnecting...")
+        time.sleep(5)
+        irc = connect(server, port, usessl, password, ident, realname, nickname, channels)
+    irc.send(bytes("JOIN " + ",".join(channels) + "\n", "UTF-8"))
     chunk = data.split()
     if len(chunk) > 0:
         if data.startswith(":"):
@@ -69,6 +78,10 @@ while True:
             command = chunk[0]
         if command == "PING":
             irc.send(bytes("PONG " + chunk[1] + "\n", "UTF-8"))
+        elif command == "ERROR":
+            print("Received ERROR from server. Reconnecting...")
+            time.sleep(5)
+            irc = connect(server, port, usessl, password, ident, realname, nickname, channels)
         elif command == "471" or command == "473" or command == "474" or command == "475":
             print("Unable to join " + chunk[3] + ": it can be full, invite only, bot is banned or need a key.")
         elif command == "KICK" and chunk[3] == nickname:

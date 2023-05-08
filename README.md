@@ -12,8 +12,7 @@ Install python3 and the official Python bindings:
 ```
 $ apt install python3 python3-pip (Debian/Ubuntu)
 $ yum install python3 python3-pip (RedHat/CentOS)
-$ pip3 install openai
-$ pip3 install pyshorteners
+$ pip3 install openai pyshorteners
 $ git clone https://github.com/knrd1/chatgpt.git
 $ cd chatgpt
 $ cp example-chat.conf chat.conf
