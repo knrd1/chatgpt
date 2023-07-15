@@ -17,6 +17,17 @@ $ git clone https://github.com/knrd1/chatgpt.git
 $ cd chatgpt
 $ cp example-chat.conf chat.conf
 ```
+To build the Docker image, you can use the following command:
+```docker build -t my-python-app .```
+
+To run the Docker container, you can use the following command:
+```docker run -p 4000:80 my-python-app```
+
+This Dockerfile ensures that your application runs in an isolated environment with its dependencies, 
+which enhances its security and reliability. However, for a production environment, you might want 
+to consider additional security measures, such as using a non-root user to run the application inside 
+the container1.
+
 ### Configuration:
 
 Edit chat.conf and change variables. Example configuration for IRCNet:
