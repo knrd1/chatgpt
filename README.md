@@ -68,11 +68,11 @@ ChatGPT IRC bot can use three API endpoints.
 
 Following models support endpoint /v1/chat/completions:
 ```
-gpt-4, gpt-4-0314, gpt-4-32k, gpt-4-32k-0314, gpt-3.5-turbo, gpt-3.5-turbo-0301
+gpt-4, gpt-4-0613, gpt-4-32k, gpt-4-32k-0613, gpt-3.5-turbo, gpt-3.5-turbo-0613, gpt-3.5-turbo-16k, gpt-3.5-turbo-16k-0613
 ```
-Models that support /v1/completions:
+Models that support /v1/completions (Legacy):
 ```
-text-davinci-003, text-davinci-002, text-curie-001, text-babbage-001, text-ada-001, davinci, curie, babbage, ada
+text-davinci-003, text-davinci-002, text-davinci-001, text-curie-001, text-babbage-001, text-ada-001, davinci, curie, babbage, ada
 ```
 Create an image using endpoint /v1/images/generations:
 ```
