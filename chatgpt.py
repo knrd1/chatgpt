@@ -94,7 +94,7 @@ while True:
         elif command == "PRIVMSG" and chunk[2].startswith("#") and chunk[3] == ":" + nickname + ":":
             channel = chunk[2].strip()
             question = data.split(nickname + ":")[1].strip()
-            if model in ["gpt-4", "gpt-4-0314", "gpt-4-32k", "gpt-4-32k-0314", "gpt-3.5-turbo", "gpt-3.5-turbo-0301"]:
+            if model in ["gpt-4", "gpt-4-0613,", "gpt-4-32k,", "gpt-4-32k-0613,", "gpt-3.5-turbo,", "gpt-3.5-turbo-0613", "gpt-3.5-turbo-16k", "gpt-3.5-turbo-16k-0613"]:
                 try:
                     response = openai.ChatCompletion.create(
                         model=model,
@@ -124,7 +124,7 @@ while True:
                 except Exception as e:
                     print("Error: " + str(e))
                     irc.send(bytes("PRIVMSG " + channel + " :API call failed. Try again later.\n", "UTF-8"))
-            elif model in ["text-davinci-003", "text-davinci-002", "text-curie-001", "text-babbage-001", "text-ada-001", "davinci", "curie", "babbage", "ada"]:
+            elif model in ["text-davinci-003", "text-davinci-002", "text-davinci-001", "text-curie-001", "text-babbage-001", "text-ada-001", "davinci", "curie", "babbage", "ada"]:
                 try:
                     response = openai.Completion.create(
                         model=model,
