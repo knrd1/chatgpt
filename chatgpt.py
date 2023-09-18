@@ -33,6 +33,10 @@ ident = config.get('irc', 'ident')
 realname = config.get('irc', 'realname')
 password = config.get('irc', 'password')
 
+# Define the list of models
+completion_models = ["gpt-3.5-turbo-instruct", "text-davinci-003", "text-davinci-002", "text-davinci-001", "text-curie-001", "text-babbage-001", "text-ada-001", "davinci", "curie", "babbage", "ada", "babbage-002", "davinci-002"]
+chatcompletion_models = ["gpt-4", "gpt-4-0613", "gpt-4-32k", "gpt-4-32k-0613", "gpt-3.5-turbo", "gpt-3.5-turbo-0613", "gpt-3.5-turbo-16k", "gpt-3.5-turbo-16k-0613"]
+
 # Connect to IRC server
 def connect(server, port, usessl, password, ident, realname, nickname, channels):
     while True:
@@ -57,7 +61,7 @@ def connect(server, port, usessl, password, ident, realname, nickname, channels)
 
 irc = connect(server, port, usessl, password, ident, realname, nickname, channels)
 
-# Listen for messages from users
+# Listen for messages from users and answer questions
 while True:
     try:
         data = irc.recv(4096).decode("UTF-8")
@@ -83,7 +87,7 @@ while True:
             time.sleep(5)
             irc = connect(server, port, usessl, password, ident, realname, nickname, channels)
         elif command == "471" or command == "473" or command == "474" or command == "475":
-            print("Unable to join " + chunk[3] + ": it can be full, invite only, bot is banned or need a key.")
+            print("Unable to join " + chunk[3] + ": Channel can be full, invite only, bot is banned or needs a key.")
         elif command == "KICK" and chunk[3] == nickname:
             irc.send(bytes("JOIN " + chunk[2] + "\n", "UTF-8"))
             print("Kicked from channel " + chunk[2] + ". Rejoining...")
@@ -94,7 +98,7 @@ while True:
         elif command == "PRIVMSG" and chunk[2].startswith("#") and chunk[3] == ":" + nickname + ":":
             channel = chunk[2].strip()
             question = data.split(nickname + ":")[1].strip()
-            if model in ["gpt-4", "gpt-4-0613", "gpt-4-32k", "gpt-4-32k-0613", "gpt-3.5-turbo", "gpt-3.5-turbo-0613", "gpt-3.5-turbo-16k", "gpt-3.5-turbo-16k-0613"]:
+            if model in chatcompletion_models:
                 try:
                     response = openai.ChatCompletion.create(
                         model=model,
@@ -123,8 +127,8 @@ while True:
                     irc.send(bytes("PRIVMSG " + channel + " :API call timed out. Try again later.\n", "UTF-8"))
                 except Exception as e:
                     print("Error: " + str(e))
-                    irc.send(bytes("PRIVMSG " + channel + " :API call failed. Try again later.\n", "UTF-8"))
-            elif model in ["text-davinci-003", "text-davinci-002", "text-davinci-001", "text-curie-001", "text-babbage-001", "text-ada-001", "davinci", "curie", "babbage", "ada"]:
+                    irc.send(bytes("PRIVMSG " + channel + " :API call failed. Check console for error message.\n", "UTF-8"))
+            elif model in completion_models:
                 try:
                     response = openai.Completion.create(
                         model=model,
@@ -153,8 +157,8 @@ while True:
                     irc.send(bytes("PRIVMSG " + channel + " :API call timed out. Try again later.\n", "UTF-8"))
                 except Exception as e:
                     print("Error: " + str(e))
-                    irc.send(bytes("PRIVMSG " + channel + " :API call failed. Try again later.\n", "UTF-8"))
-            elif model in ["dalle"]:
+                    irc.send(bytes("PRIVMSG " + channel + " :API call failed. Check console for error message.\n", "UTF-8"))
+            elif model == "dalle":
                 try:
                     response = openai.Image.create(
                     prompt="Q: " + question + "\nA:",
@@ -167,7 +171,7 @@ while True:
                     irc.send(bytes("PRIVMSG " + channel + " :" + short_url + "\n", "UTF-8"))
                 except Exception as e:
                     print("Error: " + str(e))
-                    irc.send(bytes("PRIVMSG " + channel + " :API call failed. Try again later.\n", "UTF-8"))
+                    irc.send(bytes("PRIVMSG " + channel + " :API call failed. Check console for error message..\n", "UTF-8"))
             else:
                 print("Invalid model.")
                 irc.send(bytes("PRIVMSG " + channel + " :Invalid model.\n", "UTF-8"))

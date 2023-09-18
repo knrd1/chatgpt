@@ -38,7 +38,7 @@ request_timeout = 60
 server = open.ircnet.net
 port = 6667
 ssl = false
-channels = #knrd1,#github
+channels = #linux,#github
 nickname = MyBot
 ident = mybot
 realname = My Bot
@@ -47,6 +47,15 @@ password =
 ### Connecting bot to IRC server:
 ```
 $ python3 chatgpt.py
+```
+Use screen to run bot in the background and keep it running even after you log out of your session:
+```
+$ screen python3 chatgpt.py
+```
+To detach from the screen session (leaving your ChatGPT IRC Bot running in the background), press Ctrl + A followed by d (for "detach").
+If you need to reattach to the screen session later, use the following command:
+```
+screen -r
 ```
 ### Interaction:
 ChatGPT IRC Bot will interact only if you mention its nickname:
@@ -59,7 +68,7 @@ ChatGPT IRC Bot will interact only if you mention its nickname:
 ```
 If you set the model to "dalle", the ChatGPT IRC Bot will return a shortened URL to the generated image:
 ```
-17:33:16 <@knrd1> ChatGPT: two horses dancing on the street
+17:33:16 <@knrd1> ChatGPT: impressionist style painting: two horses dancing on the street
 17:33:23 < ChatGPT> https://tinyurl.com/2hr5uf4w
 ```
 ### Model endpoint compatibility
@@ -67,28 +76,31 @@ If you set the model to "dalle", the ChatGPT IRC Bot will return a shortened URL
 ChatGPT IRC Bot can use three API endpoints.
 
 Following models support endpoint /v1/chat/completions:
-```
-gpt-4, gpt-4-0613, gpt-4-32k, gpt-4-32k-0613, gpt-3.5-turbo, gpt-3.5-turbo-0613, gpt-3.5-turbo-16k, gpt-3.5-turbo-16k-0613
-```
+
+> gpt-4, gpt-4-0613, gpt-4-32k, gpt-4-32k-0613, gpt-3.5-turbo, gpt-3.5-turbo-0613, gpt-3.5-turbo-16k, gpt-3.5-turbo-16k-0613
+
 Models that support /v1/completions (Legacy):
-```
-text-davinci-003, text-davinci-002, text-davinci-001, text-curie-001, text-babbage-001, text-ada-001, davinci, curie, babbage, ada
-```
+
+> gpt-3.5-turbo-instruct, text-davinci-003, text-davinci-002, text-davinci-001, text-curie-001, text-babbage-001, text-ada-001, davinci, curie, babbage, ada, babbage-002, davinci-002
+
 Create an image using endpoint /v1/images/generations:
-```
-dalle
-```
+
+> dalle
+
 More details about models: https://platform.openai.com/docs/models
 
 ### Docker
 
 To build the Docker image, you can use the following command:
-```docker build -t my-chatgpt-app .```
-
+```
+docker build -t my-chatgpt-app .
+```
 To run the Docker container, you can use the following command:
-```docker run -it my-chatgpt-app```
-
+```
+docker run -it my-chatgpt-app
+```
 To detach from a running Docker, press Ctrl + P. While holding down Ctrl, press Q.
-
-To reattach to the container later, you can use the following command:
-```docker attach container_id```
+To reattach to the container later, use the following command:
+```
+docker attach <container_id>
+```
