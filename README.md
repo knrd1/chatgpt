@@ -20,6 +20,10 @@ $ cp example-chat.conf chat.conf
 ### Configuration:
 
 Edit chat.conf and change variables. Example configuration for IRCNet:
+
+**There is a new variable "context", it's optional: you can leave it blank or enter what you want the bot to know and how you want the bot to behave.**
+
+**e.g.: You are an ironic and arrogant bot on the #linux channel, James and Mark are on the channel with you. James loves to play guitar and Mark is a footballer. You speak Scottish slang.**
 ```
 [openai]
 api_key = sk-XXXXXXXXXXXXXXX
@@ -27,6 +31,7 @@ api_key = sk-XXXXXXXXXXXXXXX
 [chatcompletion]
 model = gpt-3.5-turbo
 role = user
+context = You are a helpful and friendly bot on IRC channel #linux.
 temperature = 0.8
 max_tokens = 1000
 top_p = 1

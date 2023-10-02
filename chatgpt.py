@@ -22,6 +22,7 @@ top_p = config.getint('chatcompletion', 'top_p')
 frequency_penalty = config.getint('chatcompletion', 'frequency_penalty')
 presence_penalty = config.getint('chatcompletion', 'presence_penalty')
 request_timeout = config.getint('chatcompletion', 'request_timeout')
+context = config.get('chatcompletion', 'context')
 
 # Set up IRC connection settings
 server = config.get('irc', 'server')
@@ -102,7 +103,7 @@ while True:
                 try:
                     response = openai.ChatCompletion.create(
                         model=model,
-                        messages=[{"role": role, "content": question}],
+                        messages=[{"role": "system", "content": context}, {"role": "user", "content": question}],
                         temperature=temperature,
                         max_tokens=max_tokens,
                         top_p=top_p,
