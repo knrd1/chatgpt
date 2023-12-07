@@ -21,7 +21,7 @@ $ cp example-chat.conf chat.conf
 
 Edit chat.conf and change variables. Example configuration for IRCNet:
 
-**There is a new variable "context", it's optional: you can leave it blank or enter what you want the bot to know and how you want the bot to behave.**
+**There is a new variable "context", it's optional: you can leave it blank or enter what you want the bot to know and how you want the bot to behave. This will work only with models connecting to endpoint /v1/chat/completions.**
 
 **e.g.: You are an ironic and arrogant bot on the #linux channel, James and Mark are on the channel with you. James loves to play guitar and Mark is a footballer. You speak Scottish slang.**
 ```
@@ -78,11 +78,11 @@ If you set the model to "dalle", the ChatGPT IRC Bot will return a shortened URL
 ```
 ### Model endpoint compatibility
 
-ChatGPT IRC Bot can use three API endpoints.
+ChatGPT IRC Bot can use three API endpoints: 
 
 Following models support endpoint /v1/chat/completions:
 
-> gpt-4, gpt-4-0613, gpt-4-32k, gpt-4-32k-0613, gpt-3.5-turbo, gpt-3.5-turbo-0613, gpt-3.5-turbo-16k, gpt-3.5-turbo-16k-0613
+> gpt-4, gpt-4-0613, gpt-4-1106-preview, gpt-4-vision-preview, gpt-4-32k, gpt-4-32k-0613, gpt-3.5-turbo, gpt-3.5-turbo-0613, gpt-3.5-turbo-16k, gpt-3.5-turbo-16k-0613
 
 Models that support /v1/completions (Legacy):
 
