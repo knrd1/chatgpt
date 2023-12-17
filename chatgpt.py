@@ -126,9 +126,12 @@ while True:
                 except openai.error.Timeout as e:
                     print("Error: " + str(e))
                     irc.send(bytes("PRIVMSG " + channel + " :API call timed out. Try again later.\n", "UTF-8"))
+                except openai.error.OpenAIError as e:
+                    print("Error: " + str(e))
+                    irc.send(bytes(f"PRIVMSG {channel} :API call failed. {str(e)}\n", "UTF-8"))
                 except Exception as e:
                     print("Error: " + str(e))
-                    irc.send(bytes("PRIVMSG " + channel + " :API call failed. Check console for error message.\n", "UTF-8"))
+                    irc.send(bytes(f"PRIVMSG {channel} :An unexpected error occurred. {str(e)}\n", "UTF-8"))
             elif model in completion_models:
                 try:
                     response = openai.Completion.create(
@@ -156,9 +159,12 @@ while True:
                 except openai.error.Timeout as e:
                     print("Error: " + str(e))
                     irc.send(bytes("PRIVMSG " + channel + " :API call timed out. Try again later.\n", "UTF-8"))
+                except openai.error.OpenAIError as e:
+                    print("Error: " + str(e))
+                    irc.send(bytes(f"PRIVMSG {channel} :API call failed. {str(e)}\n", "UTF-8"))
                 except Exception as e:
                     print("Error: " + str(e))
-                    irc.send(bytes("PRIVMSG " + channel + " :API call failed. Check console for error message.\n", "UTF-8"))
+                    irc.send(bytes(f"PRIVMSG {channel} :An unexpected error occurred. {str(e)}\n", "UTF-8"))
             elif model == "dalle":
                 try:
                     response = openai.Image.create(
@@ -170,9 +176,15 @@ while True:
                     type_tiny = pyshorteners.Shortener()
                     short_url = type_tiny.tinyurl.short(long_url)
                     irc.send(bytes("PRIVMSG " + channel + " :" + short_url + "\n", "UTF-8"))
+                except openai.error.Timeout as e:
+                    print("Error: " + str(e))
+                    irc.send(bytes("PRIVMSG " + channel + " :API call timed out. Try again later.\n", "UTF-8"))
+                except openai.error.OpenAIError as e:
+                    print("Error: " + str(e))
+                    irc.send(bytes(f"PRIVMSG {channel} :API call failed. {str(e)}\n", "UTF-8"))
                 except Exception as e:
                     print("Error: " + str(e))
-                    irc.send(bytes("PRIVMSG " + channel + " :API call failed. Check console for error message..\n", "UTF-8"))
+                    irc.send(bytes(f"PRIVMSG {channel} :An unexpected error occurred. {str(e)}\n", "UTF-8"))
             else:
                 print("Invalid model.")
                 irc.send(bytes("PRIVMSG " + channel + " :Invalid model.\n", "UTF-8"))
