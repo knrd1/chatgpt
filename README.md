@@ -21,9 +21,8 @@ $ cp example-chat.conf chat.conf
 
 Edit chat.conf and change variables. Example configuration for IRCNet:
 
-**There is a new variable "context", it's optional: you can leave it blank or enter what you want the bot to know and how you want the bot to behave. This will work only with models connecting to endpoint /v1/chat/completions.**
+Variable "context" is optional: you can leave it blank or enter what you want the bot to know and how you want the bot to behave. This will work only with models connecting to endpoint /v1/chat/completions
 
-**e.g.: You are an ironic and arrogant bot on the #linux channel, James and Mark are on the channel with you. James loves to play guitar and Mark is a footballer. You speak Scottish slang.**
 ```
 [openai]
 api_key = sk-XXXXXXXXXXXXXXX
@@ -82,15 +81,15 @@ ChatGPT IRC Bot can use three API endpoints:
 
 Following models support endpoint /v1/chat/completions:
 
-> gpt-4, gpt-4-0613, gpt-4-1106-preview, gpt-4-vision-preview, gpt-4-32k, gpt-4-32k-0613, gpt-3.5-turbo, gpt-3.5-turbo-0613, gpt-3.5-turbo-16k, gpt-3.5-turbo-16k-0613
+> gpt-4, gpt-4-turbo-preview, gpt-4-vision-preview, gpt-4-32k, gpt-3.5-turbo, gpt-3.5-turbo-16k, fine-tuned versions of gpt-3.5-turbo
 
 Models that support /v1/completions (Legacy):
 
-> gpt-3.5-turbo-instruct, text-davinci-003, text-davinci-002, text-davinci-001, text-curie-001, text-babbage-001, text-ada-001, davinci, curie, babbage, ada, babbage-002, davinci-002
+> gpt-3.5-turbo-instruct, babbage-002, davinci-002
 
 Create an image using endpoint /v1/images/generations:
 
-> dalle
+> dall-e-2, dall-e-3
 
 More details about models: https://platform.openai.com/docs/models
 
