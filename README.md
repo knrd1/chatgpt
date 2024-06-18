@@ -70,7 +70,7 @@ ChatGPT IRC Bot will interact only if you mention its nickname:
 10:35:59 < ChatGPT> Yes, I like IRC. It is a great way to communicate with people from around the world.
 
 ```
-If you set the model to "dalle", the ChatGPT IRC Bot will return a shortened URL to the generated image:
+If you set the model to "dall-e-2" or "dall-e-3", the ChatGPT IRC Bot will return a shortened URL to the generated image:
 ```
 17:33:16 <@knrd1> ChatGPT: impressionist style painting: two horses dancing on the street
 17:33:23 < ChatGPT> https://tinyurl.com/2hr5uf4w
@@ -81,7 +81,8 @@ ChatGPT IRC Bot can use three API endpoints:
 
 Following models support endpoint /v1/chat/completions:
 
-> gpt-4, gpt-4-turbo-preview, gpt-4-vision-preview, gpt-4-32k, gpt-3.5-turbo, gpt-3.5-turbo-16k, fine-tuned versions of gpt-3.5-turbo
+> gpt-4o, gpt-4, gpt-4-turbo-preview, gpt-4-vision-preview, gpt-4-32k, gpt-3.5-turbo, gpt-3.5-turbo-16k, fine-tuned versions of gpt-3.5-turbo
+> gpt-4o, gpt-4, gpt-4-turbo, gpt-4-turbo-preview, gpt-3.5-turbo
 
 Models that support /v1/completions (Legacy):
 
