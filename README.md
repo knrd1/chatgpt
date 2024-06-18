@@ -81,7 +81,6 @@ ChatGPT IRC Bot can use three API endpoints:
 
 Following models support endpoint /v1/chat/completions:
 
-> gpt-4o, gpt-4, gpt-4-turbo-preview, gpt-4-vision-preview, gpt-4-32k, gpt-3.5-turbo, gpt-3.5-turbo-16k, fine-tuned versions of gpt-3.5-turbo
 > gpt-4o, gpt-4, gpt-4-turbo, gpt-4-turbo-preview, gpt-3.5-turbo
 
 Models that support /v1/completions (Legacy):
