@@ -11,17 +11,17 @@ https://platform.openai.com/docs/api-reference
    * Debian/Ubuntu
      ```
      apt install python3 python3-pip
-     pip3 install openai==0.28 pyshorteners
+     pip3 install openai==0.28.1 pyshorteners
      ```
    * RedHat/CentOS
      ```
      yum install python3 python3-pip
-     pip3 install openai==0.28 pyshorteners
+     pip3 install openai==0.28.1 pyshorteners
      ```
    * FreeBSD
      ```
      pkg install python311 py311-pip
-     pip install openai==0.28 pyshorteners
+     pip install openai==0.28.1 pyshorteners
      ```
 
 ## Installation
@@ -30,15 +30,12 @@ git clone https://github.com/knrd1/chatgpt.git
 ```
 
 ## Configuration
-The package includes an example configuration file (example-chat.conf) which you can copy and modify.
+ChatGPT IRC Bot uses __chat.conf__ plaintext file as its configuration file. The package includes an example IRCnet configuration file (example-chat.conf) which you can copy and modify.
 ```
-$ cd chatgpt
-$ cp example-chat.conf chat.conf
+cd chatgpt
+cp example-chat.conf chat.conf
 ```
-
-Edit chat.conf and change variables. Example configuration for IRCNet:
-
-Variable "context" is optional: you can leave it blank or enter what you want the bot to know and how you want the bot to behave. This will work only with models connecting to endpoint /v1/chat/completions
+> Variable __context__ is optional, you can leave it blank or enter what you want the bot to know and how you want the bot to behave. This will work only with models connecting to endpoint /v1/chat/completions (see below).
 
 ```
 [openai]
@@ -107,7 +104,7 @@ If you set the model to "dall-e-2" or "dall-e-3", the ChatGPT IRC Bot will retur
 ```
 
 ## Model endpoint compatibility
-ChatGPT IRC Bot can use three API endpoints: 
+ChatGPT IRC Bot can use three API models:
 * Models that support endpoint /v1/chat/completions
 > gpt-4o, gpt-4, gpt-4-turbo, gpt-4-turbo-preview, gpt-3.5-turbo
 * Models that support /v1/completions (Legacy)
