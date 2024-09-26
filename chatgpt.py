@@ -36,7 +36,7 @@ password = config.get('irc', 'password')
 
 # Define the list of models
 completion_models = ["gpt-3.5-turbo-instruct", "babbage-002", "davinci-002"]
-chatcompletion_models = ["gpt-4o", "gpt-4", "gpt-4-turbo", "gpt-4-turbo-preview", "gpt-3.5-turbo"]
+chatcompletion_models = ["gpt-4o-mini", "gpt-4o", "gpt-4", "gpt-4-turbo", "gpt-4-turbo-preview", "gpt-3.5-turbo"]
 images_models = ["dall-e-2", "dall-e-3"]
 
 # Connect to IRC server
