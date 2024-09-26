@@ -1,7 +1,5 @@
 # ChatGPT IRC Bot
-ChatGPT IRC Bot is a simple IRC bot written in Python. It connects to OpenAI endpoints to answer questions or generate images.
-
-ChatGPT IRC Bot uses official bindings from OpenAI to interact with the API through HTTP requests.
+ChatGPT IRC Bot is a simple IRC bot written in Python. It connects to OpenAI endpoints to answer questions or generate images and uses official bindings from OpenAI to interact with the API through HTTP requests.
 
 https://platform.openai.com/docs/api-reference
 
