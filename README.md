@@ -106,11 +106,11 @@ If you set the model to "dall-e-2" or "dall-e-3", the ChatGPT IRC Bot will retur
 ## Model endpoint compatibility
 ChatGPT IRC Bot can use three API models:
 * Models that support endpoint /v1/chat/completions
-> gpt-4o, gpt-4, gpt-4-turbo, gpt-4-turbo-preview, gpt-3.5-turbo
+  > gpt-4o-mini, gpt-4o, gpt-4, gpt-4-turbo, gpt-4-turbo-preview, gpt-3.5-turbo
 * Models that support /v1/completions (Legacy)
-> gpt-3.5-turbo-instruct, babbage-002, davinci-002
+  > gpt-3.5-turbo-instruct, babbage-002, davinci-002
 * Models that support creation of an image using endpoint /v1/images/generations:
-> dall-e-2, dall-e-3
+  > dall-e-2, dall-e-3
 
 More details about models: https://platform.openai.com/docs/models
 
