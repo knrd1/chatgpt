@@ -8,21 +8,21 @@ https://platform.openai.com/docs/api-reference
 ## Prerequisites
 1. Create an account and obtain your API key: https://platform.openai.com/account/api-keys
 2. Install Python3 and the official Python bindings (openai: 0.28.0, 0.28.1; pyshorteners)
-* Debian/Ubuntu
-```
-apt install python3 python3-pip
-pip3 install openai==0.28 pyshorteners
-```
-* RedHat/CentOS
-```
-$ yum install python3 python3-pip
-$ pip3 install openai==0.28 pyshorteners
-```
-* FreeBSD
-```
-pkg install python311 py311-pip
-pip install openai==0.28 pyshorteners
-```
+  * Debian/Ubuntu
+  ```
+  apt install python3 python3-pip
+  pip3 install openai==0.28 pyshorteners
+  ```
+  * RedHat/CentOS
+  ```
+  yum install python3 python3-pip
+  pip3 install openai==0.28 pyshorteners
+  ```
+  * FreeBSD
+  ```
+  pkg install python311 py311-pip
+  pip install openai==0.28 pyshorteners
+  ```
 
 ## Installation
 ```
