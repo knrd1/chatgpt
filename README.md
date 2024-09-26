@@ -64,25 +64,27 @@ password =
 ```
 
 ## Running bot
+To start bot, run the command below.
 * Debian/Ubuntu/RedHat/CentOS
-```
-python3 chatgpt.py
-```
+  ```
+  python3 chatgpt.py
+  ```
 * FreeBSD
-```
-python3.11 chatgpt.py
-```
+  ```
+  python3.11 chatgpt.py
+  ```
+
 Use __screen__ to run bot in the background and keep it running even after you log out of your session:
 * Debian/Ubuntu/RedHat/CentOS
-```
-screen python3 chatgpt.py
-```
+  ```
+  screen python3 chatgpt.py
+  ```
 * FreeBSD
-```
-screen python3.11 chatgpt.py
-```
+  ```
+  screen python3.11 chatgpt.py
+  ```
 
-To detach from the screen session (leaving your ChatGPT IRC Bot running in the background), press Ctrl + A followed by d (for "detach").
+To detach from the __screen__ session (leaving your ChatGPT IRC Bot running in the background), press Ctrl + A followed by d (for "detach").
 If you need to reattach to the screen session later, use the following command:
 ```
 screen -r
@@ -97,7 +99,7 @@ ChatGPT IRC Bot will interact only if you mention its nickname.
 10:35:59 < ChatGPT> Yes, I like IRC. It is a great way to communicate with people from around the world.
 ```
 
-If you set the model to "dall-e-2" or "dall-e-3", the ChatGPT IRC Bot will return a shortened URL to the generated image:
+If you set the model to __dall-e-2__ or __dall-e-3__, the ChatGPT IRC Bot will return a shortened URL to the generated image.
 ```
 17:33:16 <@knrd1> ChatGPT: impressionist style painting: two horses dancing on the street
 17:33:23 < ChatGPT> https://tinyurl.com/2hr5uf4w
@@ -109,7 +111,7 @@ ChatGPT IRC Bot can use three API models:
   > gpt-4o-mini, gpt-4o, gpt-4, gpt-4-turbo, gpt-4-turbo-preview, gpt-3.5-turbo
 * Models that support /v1/completions (Legacy)
   > gpt-3.5-turbo-instruct, babbage-002, davinci-002
-* Models that support creation of an image using endpoint /v1/images/generations:
+* Models that support the creation of an image using endpoint /v1/images/generations
   > dall-e-2, dall-e-3
 
 More details about models: https://platform.openai.com/docs/models
