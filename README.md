@@ -28,7 +28,7 @@ git clone https://github.com/knrd1/chatgpt.git
 ```
 
 ## Configuration
-ChatGPT IRC Bot uses __chat.conf__ plaintext file as its configuration file. The package includes an example IRCnet configuration file (example-chat.conf) which you can copy and modify.
+ChatGPT IRC Bot uses __chat.conf__ plaintext file as its configuration file. The package includes an example IRCnet configuration file (__example-chat.conf__) which you can copy and modify.
 ```
 cd chatgpt
 cp example-chat.conf chat.conf
@@ -72,7 +72,7 @@ To start bot, run the command below.
   python3.11 chatgpt.py
   ```
 
-Use __screen__ to run bot in the background and keep it running even after you log out of your session:
+Use __screen__ to run the bot in the background and keep it running even after you log out of your session.
 * Debian/Ubuntu/RedHat/CentOS
   ```
   screen python3 chatgpt.py
