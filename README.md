@@ -65,21 +65,21 @@ password =
 To start bot, run the command below.
 * Debian/Ubuntu/RedHat/CentOS
   ```
-  python3 chatgpt.py
+  python3 chatgpt.py chat.conf
   ```
 * FreeBSD
   ```
-  python3.11 chatgpt.py
+  python3.11 chatgpt.py chat.conf
   ```
 
 Use __screen__ to run the bot in the background and keep it running even after you log out of your session.
 * Debian/Ubuntu/RedHat/CentOS
   ```
-  screen python3 chatgpt.py
+  screen python3 chatgpt.py chat.conf
   ```
 * FreeBSD
   ```
-  screen python3.11 chatgpt.py
+  screen python3.11 chatgpt.py chat.conf
   ```
 
 To detach from the __screen__ session (leaving your ChatGPT IRC Bot running in the background), press Ctrl + A followed by d (for "detach").
