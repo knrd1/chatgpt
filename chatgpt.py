@@ -1,4 +1,5 @@
 import sys
+import os
 import openai
 import socket
 import ssl
@@ -8,9 +9,13 @@ import pyshorteners
 from typing import Union, Tuple
 
 # Read configuration from file
-config = configparser.ConfigParser()
-#config.read('chat.conf')
-config.read(sys.argv[1])
+conf_file = sys.argv[1]
+if os.path.exists(conf_file):
+    config = configparser.ConfigParser()
+    config.read(conf_file)
+else:
+    print("Specified config file (" + conf_file + ") does not exist.")
+    exit(1)
 
 # Set up OpenAI API key
 openai.api_key = config.get('openai', 'api_key')
