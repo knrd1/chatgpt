@@ -4,14 +4,24 @@ import ssl
 import time
 import configparser
 import pyshorteners
+import requests
+import json
 from typing import Union, Tuple
 
 # Read configuration from file
 config = configparser.ConfigParser()
 config.read('chat.conf')
 
+# Set up local server
+target_ip = config.get('localserver', 'target_ip')
+local_port = config.get('localserver', 'local_port')
+mapping = config.get('localserver', 'mapping')
+use_local_server = config.getboolean('localserver', 'use_local_server')
+url = f"http://{target_ip}:{local_port}{mapping}"
+
 # Set up OpenAI API key
-openai.api_key = config.get('openai', 'api_key')
+if not use_local_server:
+    openai.api_key = config.get('openai', 'api_key')
 
 # Set up ChatCompletion parameters
 model = config.get('chatcompletion', 'model')
@@ -63,6 +73,31 @@ def connect(server, port, usessl, password, ident, realname, nickname, channels)
 
 irc = connect(server, port, usessl, password, ident, realname, nickname, channels)
 
+accumulated_messages = [{'role': 'system', 'content': context }]
+local_data = {
+    'messages': accumulated_messages, 
+    'temperature': temperature,
+    'max_tokens': max_tokens,
+    'stream': False
+}
+headers = { 'Content-Type': 'application/json' }
+
+def get_llm_response(question):
+    local_data["messages"].append({'role':'user', 'content': question})
+    print("sending json:" + json.dumps(local_data))
+    response = requests.post(url, headers=headers, json=local_data, stream=False)
+    response.raise_for_status()
+    output = []
+
+    content = response.json()['choices'][0]['message']['content']
+    print(content)
+    local_data["messages"].append({'role':'assistant', 'content': content})
+    
+    for line in response.json()['choices'][0]['message']['content'].split('\n'):
+        output.append(line)
+
+    return output
+
 # Listen for messages from users and answer questions
 while True:
     try:
@@ -98,98 +133,113 @@ while True:
                 irc.send(bytes("JOIN " + data.split(" :")[1].strip() + "\n", "UTF-8"))
                 print("Invited into channel " + data.split(" :")[1].strip() + ". Joining...")
         elif command == "PRIVMSG" and chunk[2].startswith("#") and chunk[3] == ":" + nickname + ":":
-            channel = chunk[2].strip()
-            question = data.split(nickname + ":")[1].strip()
-            if model in chatcompletion_models:
-                try:
-                    response = openai.ChatCompletion.create(
-                        model=model,
-                        messages=[{"role": "system", "content": context}, {"role": "user", "content": question}],
-                        temperature=temperature,
-                        max_tokens=max_tokens,
-                        top_p=top_p,
-                        frequency_penalty=frequency_penalty,
-                        presence_penalty=presence_penalty,
-                        request_timeout=request_timeout
-                    )
-                    answers = [x.strip() for x in response.choices[0].message.content.strip().split('\n')]
-                    for answer in answers:
-                        while len(answer) > 0:
-                            if len(answer) <= 392:
-                                irc.send(bytes("PRIVMSG " + channel + " :" + answer + "\n", "UTF-8"))
-                                answer = ""
-                            else:
-                                last_space_index = answer[:392].rfind(" ")
-                                if last_space_index == -1:
-                                    last_space_index = 392
-                                irc.send(bytes("PRIVMSG " + channel + " :" + answer[:last_space_index] + "\n", "UTF-8"))
-                                answer = answer[last_space_index:].lstrip()
-                except openai.error.Timeout as e:
-                    print("Error: " + str(e))
-                    irc.send(bytes("PRIVMSG " + channel + " :API call timed out. Try again later.\n", "UTF-8"))
-                except openai.error.OpenAIError as e:
-                    print("Error: " + str(e))
-                    irc.send(bytes(f"PRIVMSG {channel} :API call failed. {str(e)}\n", "UTF-8"))
-                except Exception as e:
-                    print("Error: " + str(e))
-                    irc.send(bytes(f"PRIVMSG {channel} :An unexpected error occurred. {str(e)}\n", "UTF-8"))
-            elif model in completion_models:
-                try:
-                    response = openai.Completion.create(
-                        model=model,
-                        prompt="Q: " + question + "\nA:",
-                        temperature=temperature,
-                        max_tokens=max_tokens,
-                        top_p=top_p,
-                        frequency_penalty=frequency_penalty,
-                        presence_penalty=presence_penalty,
-                        request_timeout=request_timeout
-                    )
-                    answers = [x.strip() for x in response.choices[0].text.strip().split('\n')]
-                    for answer in answers:
-                        while len(answer) > 0:
-                            if len(answer) <= 392:
-                                irc.send(bytes("PRIVMSG " + channel + " :" + answer + "\n", "UTF-8"))
-                                answer = ""
-                            else:
-                                last_space_index = answer[:392].rfind(" ")
-                                if last_space_index == -1:
-                                    last_space_index = 392
-                                irc.send(bytes("PRIVMSG " + channel + " :" + answer[:last_space_index] + "\n", "UTF-8"))
-                                answer = answer[last_space_index:].lstrip()
-                except openai.error.Timeout as e:
-                    print("Error: " + str(e))
-                    irc.send(bytes("PRIVMSG " + channel + " :API call timed out. Try again later.\n", "UTF-8"))
-                except openai.error.OpenAIError as e:
-                    print("Error: " + str(e))
-                    irc.send(bytes(f"PRIVMSG {channel} :API call failed. {str(e)}\n", "UTF-8"))
-                except Exception as e:
-                    print("Error: " + str(e))
-                    irc.send(bytes(f"PRIVMSG {channel} :An unexpected error occurred. {str(e)}\n", "UTF-8"))
-            elif model in images_models:
-                try:
-                    response = openai.Image.create(
-                    prompt="Q: " + question + "\nA:",
-                    n=1,
-                    size="1024x1024"
-                    )
-                    long_url = response.data[0].url
-                    type_tiny = pyshorteners.Shortener()
-                    short_url = type_tiny.tinyurl.short(long_url)
-                    irc.send(bytes("PRIVMSG " + channel + " :" + short_url + "\n", "UTF-8"))
-                except openai.error.Timeout as e:
-                    print("Error: " + str(e))
-                    irc.send(bytes("PRIVMSG " + channel + " :API call timed out. Try again later.\n", "UTF-8"))
-                except openai.error.OpenAIError as e:
-                    print("Error: " + str(e))
-                    irc.send(bytes(f"PRIVMSG {channel} :API call failed. {str(e)}\n", "UTF-8"))
-                except Exception as e:
-                    print("Error: " + str(e))
-                    irc.send(bytes(f"PRIVMSG {channel} :An unexpected error occurred. {str(e)}\n", "UTF-8"))
+            if use_local_server:
+                channel = chunk[2].strip()
+                question = data.split(nickname + ":")[1].strip()
+                response = get_llm_response(question)
+                for answer in response:
+                    if len(answer) <= 392:
+                        irc.send(bytes("PRIVMSG " + channel + " :" + answer + "\n", "UTF-8"))
+                        answer = ""
+                    else:
+                        last_space_index = answer[:392].rfind(" ")
+                        if last_space_index == -1:
+                            last_space_index = 392
+                        irc.send(bytes("PRIVMSG " + channel + " :" + answer[:last_space_index] + "\n", "UTF-8"))
+                        answer = answer[last_space_index:].lstrip()
             else:
-                print("Invalid model.")
-                irc.send(bytes("PRIVMSG " + channel + " :Invalid model.\n", "UTF-8"))
-                continue
+                channel = chunk[2].strip()
+                question = data.split(nickname + ":")[1].strip()
+                if model in chatcompletion_models:
+                    try:
+                        response = openai.ChatCompletion.create(
+                            model=model,
+                            messages=[{"role": "system", "content": context}, {"role": "user", "content": question}],
+                            temperature=temperature,
+                            max_tokens=max_tokens,
+                            top_p=top_p,
+                            frequency_penalty=frequency_penalty,
+                            presence_penalty=presence_penalty,
+                            request_timeout=request_timeout
+                        )
+                        answers = [x.strip() for x in response.choices[0].message.content.strip().split('\n')]
+                        for answer in answers:
+                            while len(answer) > 0:
+                                if len(answer) <= 392:
+                                    irc.send(bytes("PRIVMSG " + channel + " :" + answer + "\n", "UTF-8"))
+                                    answer = ""
+                                else:
+                                    last_space_index = answer[:392].rfind(" ")
+                                    if last_space_index == -1:
+                                        last_space_index = 392
+                                    irc.send(bytes("PRIVMSG " + channel + " :" + answer[:last_space_index] + "\n", "UTF-8"))
+                                    answer = answer[last_space_index:].lstrip()
+                    except openai.error.Timeout as e:
+                        print("Error: " + str(e))
+                        irc.send(bytes("PRIVMSG " + channel + " :API call timed out. Try again later.\n", "UTF-8"))
+                    except openai.error.OpenAIError as e:
+                        print("Error: " + str(e))
+                        irc.send(bytes(f"PRIVMSG {channel} :API call failed. {str(e)}\n", "UTF-8"))
+                    except Exception as e:
+                        print("Error: " + str(e))
+                        irc.send(bytes(f"PRIVMSG {channel} :An unexpected error occurred. {str(e)}\n", "UTF-8"))
+                elif model in completion_models:
+                    try:
+                        response = openai.Completion.create(
+                            model=model,
+                            prompt="Q: " + question + "\nA:",
+                            temperature=temperature,
+                            max_tokens=max_tokens,
+                            top_p=top_p,
+                            frequency_penalty=frequency_penalty,
+                            presence_penalty=presence_penalty,
+                            request_timeout=request_timeout
+                        )
+                        answers = [x.strip() for x in response.choices[0].text.strip().split('\n')]
+                        for answer in answers:
+                            while len(answer) > 0:
+                                if len(answer) <= 392:
+                                    irc.send(bytes("PRIVMSG " + channel + " :" + answer + "\n", "UTF-8"))
+                                    answer = ""
+                                else:
+                                    last_space_index = answer[:392].rfind(" ")
+                                    if last_space_index == -1:
+                                        last_space_index = 392
+                                    irc.send(bytes("PRIVMSG " + channel + " :" + answer[:last_space_index] + "\n", "UTF-8"))
+                                    answer = answer[last_space_index:].lstrip()
+                    except openai.error.Timeout as e:
+                        print("Error: " + str(e))
+                        irc.send(bytes("PRIVMSG " + channel + " :API call timed out. Try again later.\n", "UTF-8"))
+                    except openai.error.OpenAIError as e:
+                        print("Error: " + str(e))
+                        irc.send(bytes(f"PRIVMSG {channel} :API call failed. {str(e)}\n", "UTF-8"))
+                    except Exception as e:
+                        print("Error: " + str(e))
+                        irc.send(bytes(f"PRIVMSG {channel} :An unexpected error occurred. {str(e)}\n", "UTF-8"))
+                elif model in images_models:
+                    try:
+                        response = openai.Image.create(
+                        prompt="Q: " + question + "\nA:",
+                        n=1,
+                        size="1024x1024"
+                        )
+                        long_url = response.data[0].url
+                        type_tiny = pyshorteners.Shortener()
+                        short_url = type_tiny.tinyurl.short(long_url)
+                        irc.send(bytes("PRIVMSG " + channel + " :" + short_url + "\n", "UTF-8"))
+                    except openai.error.Timeout as e:
+                        print("Error: " + str(e))
+                        irc.send(bytes("PRIVMSG " + channel + " :API call timed out. Try again later.\n", "UTF-8"))
+                    except openai.error.OpenAIError as e:
+                        print("Error: " + str(e))
+                        irc.send(bytes(f"PRIVMSG {channel} :API call failed. {str(e)}\n", "UTF-8"))
+                    except Exception as e:
+                        print("Error: " + str(e))
+                        irc.send(bytes(f"PRIVMSG {channel} :An unexpected error occurred. {str(e)}\n", "UTF-8"))
+                else:
+                    print("Invalid model.")
+                    irc.send(bytes("PRIVMSG " + channel + " :Invalid model.\n", "UTF-8"))
+                    continue
     else:
         continue
     time.sleep(1)
