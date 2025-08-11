@@ -10,10 +10,6 @@ A simple Python-based IRC bot for ChatGPT, now upgraded with modern OpenAI API s
  ```
 pip3 install "openai>=1.0.0"
 ```
-or
-```
-pip install --upgrade openai
-```
 - You **must** re-configure your configuration file chat.conf with new variables and models. Legacy "completions" models are no longer supported.
 
 ## What’s new?
