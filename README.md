@@ -2,9 +2,9 @@
 
 A simple Python-based IRC bot for ChatGPT, now upgraded with modern OpenAI API support.
 
-## August 2025 major upgrade - important for existing users:
+## ChatGPT IRC Bot now supports online web search!
 
-**New ChatGPT IRC Bot now supports online web search!**
+### August 2025 major upgrade - important for existing users
 
 - You **must** reinstall/upgrade to **OpenAI Python SDK 1.x**:
  ```
@@ -12,7 +12,7 @@ pip3 install "openai>=1.0.0"
 ```
 - You **must** re-configure your configuration file chat.conf with new variables and models. Legacy "completions" models are no longer supported.
 
-## What’s new?
+### What’s new?
 
 - Fully migrated to **OpenAI Python SDK v1.x**.
 - Enabled **web search integration** - model will fetch live information when needed.
