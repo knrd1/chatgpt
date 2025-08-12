@@ -28,6 +28,7 @@ top_p = config.getint('chatcompletion', 'top_p')
 frequency_penalty = config.getint('chatcompletion', 'frequency_penalty')
 presence_penalty = config.getint('chatcompletion', 'presence_penalty')
 request_timeout = config.getint('chatcompletion', 'request_timeout')
+reasoning_effort_conf = config.get('chatcompletion', 'reasoning_effort', fallback="medium").strip().lower()
 
 server = config.get('irc', 'server')
 port = config.getint('irc', 'port')
@@ -38,8 +39,15 @@ ident = config.get('irc', 'ident')
 realname = config.get('irc', 'realname')
 password = config.get('irc', 'password')
 
-chatcompletion_models: List[str] = [m.strip() for m in config.get('models', 'chatcompletion_models').split(",") if m.strip()]
-images_models: List[str] = [m.strip() for m in config.get('models', 'images_models').split(",") if m.strip()]
+completion_models: List[str] = [m.strip() for m in config.get('models', 'completion_models', fallback="").split(",") if m.strip()]
+chatcompletion_models: List[str] = [m.strip() for m in config.get('models', 'chatcompletion_models', fallback="").split(",") if m.strip()]
+images_models: List[str] = [m.strip() for m in config.get('models', 'images_models', fallback="").split(",") if m.strip()]
+web_search_models: List[str] = [m.strip() for m in config.get('features', 'web_search_models', fallback="").split(",") if m.strip()]
+
+reasoning_models = [
+    "o1", "o1-mini", "o3", "o3-mini", "o4", "o4-mini",
+    "gpt-5", "gpt-5-mini", "gpt-5-nano"
+]
 
 def connect(server, port, usessl, password, ident, realname, nickname, channels):
     while True:
@@ -82,18 +90,30 @@ def answer_with_lines(irc_sock, channel: str, body: str):
     for line in lines:
         send_long_message(irc_sock, channel, line)
 
+def _responses_call(full_input: str, use_search: bool):
+    kwargs = {
+        "model": model,
+        "input": full_input,
+        "temperature": 1,
+        "top_p": top_p,
+        "max_output_tokens": max_completion_tokens
+    }
+    if context:
+        kwargs["instructions"] = context
+    if use_search:
+        kwargs["tools"] = [{"type": "web_search"}]
+        kwargs["tool_choice"] = "auto"
+    if model in reasoning_models:
+        kwargs["reasoning"] = {"effort": reasoning_effort_conf}
+    return client.with_options(timeout=float(request_timeout)).responses.create(**kwargs)
+
 def generate_with_web_search(question: str) -> str:
     full_input = question if not context else f"{context}\n\n{question}"
-    resp = client.with_options(timeout=float(request_timeout)).responses.create(
-        model=model,
-        input=full_input,
-        tools=[{"type": "web_search"}],
-        tool_choice="auto",
-        temperature=1,
-        top_p=top_p,
-        max_output_tokens=max_completion_tokens,
-        instructions=context if context else None
-    )
+    use_search = model in web_search_models
+    try:
+        resp = _responses_call(full_input, use_search)
+    except openai.BadRequestError:
+        resp = _responses_call(full_input, False)
     txt = getattr(resp, "output_text", None)
     if txt:
         return txt.strip()
@@ -104,9 +124,9 @@ def generate_with_web_search(question: str) -> str:
                 for c in getattr(item, "content", []):
                     if getattr(c, "type", "") == "output_text":
                         parts.append(getattr(c, "text", ""))
-        return "\n".join([p for p in parts if p]).strip() or "No content in response..."
+        return "\n".join([p for p in parts if p]).strip() or "No content in the response."
     except Exception:
-        return "Could not read the content..."
+        return "Could not parse the response."
 
 def generate_legacy_completion(question: str) -> str:
     comp = client.chat.completions.create(
@@ -133,7 +153,7 @@ def generate_image_url(prompt: str) -> str:
             return img_url
     b64 = getattr(gen.data[0], "b64_json", None)
     if not b64:
-        return "No URL or b64 in response..."
+        return "No URL or base64 data in image response."
     img_bytes = base64.b64decode(b64)
     fn = f"/tmp/oai_{uuid.uuid4().hex}.png"
     with open(fn, "wb") as f:
@@ -176,7 +196,7 @@ while True:
         continue
 
     if command in ("471", "473", "474", "475"):
-        print("Unable to join " + (chunk[3] if len(chunk) > 3 else "") + ": Channel can be full, invite only, bot is banned or needs a key.")
+        print("Unable to join " + (chunk[3] if len(chunk) > 3 else "") + ": Channel may be full, invite-only, banned or require a key.")
         time.sleep(1)
         continue
 
@@ -203,6 +223,9 @@ while True:
         try:
             if model in chatcompletion_models:
                 answer_text = generate_with_web_search(question)
+                answer_with_lines(irc, channel, answer_text)
+            elif model in completion_models:
+                answer_text = generate_legacy_completion(question)
                 answer_with_lines(irc, channel, answer_text)
             elif model in images_models:
                 info = generate_image_url(question)
