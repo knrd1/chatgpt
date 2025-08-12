@@ -52,10 +52,10 @@ top_p = 1
 frequency_penalty = 0
 presence_penalty = 0
 request_timeout = 60
-reasoning_effort = low
+reasoning_effort = medium
 
 [irc]
-server = open.ircnet.net
+server = irc.ircnet.com
 port = 6667
 ssl = false
 channels = #linux,github
