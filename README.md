@@ -52,6 +52,7 @@ top_p = 1
 frequency_penalty = 0
 presence_penalty = 0
 request_timeout = 60
+reasoning_effort = low
 
 [irc]
 server = open.ircnet.net
@@ -64,8 +65,11 @@ realname = ChatGPT IRC Bot
 password = 
 
 [models]
-chatcompletion_models = gpt-5,gpt-5-mini,gpt-5-nano,gpt-5-chat,GPT-4.1,GPT-4.1-mini,o1,o1-preview,o1-mini,o3,o3-mini,o3-pro,o4-mini,o4-mini-high
+chatcompletion_models = gpt-5,gpt-5-mini,gpt-5-nano,gpt-4.1,gpt-4.1-mini,gpt-4o,gpt-4o-mini,o1,o1-mini,o3,o3-mini,o4,o4-mini
 images_models = dall-e-3,gpt-image-1
+
+[features]
+web_search_models = gpt-5,gpt-5-mini,gpt-5-nano,gpt-4o,gpt-4o-mini
 
 ```
 ### Connecting bot to IRC server:
